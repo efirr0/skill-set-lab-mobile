@@ -1,0 +1,17 @@
+{
+  "name": "Skill Set Lab",
+  "short_name": "Skill Lab",
+  "start_url": "./skill_set_mobile.html",
+  "display": "standalone",
+  "background_color": "#f4f7fb",
+  "theme_color": "#1f56d8",
+  "description": "Mobile skill set planner",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
