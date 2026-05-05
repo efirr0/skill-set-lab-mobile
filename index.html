@@ -85,6 +85,12 @@
       border-color: var(--blue);
       font-weight: 800;
     }
+    button.secondary {
+      margin-top: 8px;
+      background: #e7edf7;
+      color: #26354d;
+      border-color: var(--line);
+    }
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
     .chip {
@@ -131,6 +137,26 @@
     details.gear-details summary::-webkit-details-marker { display: none; }
     .muted { color: var(--muted); font-size: 13px; }
     .empty { color: var(--muted); text-align: center; padding: 24px 0; }
+    .missing-list h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+    .missing-row {
+      border-top: 1px solid var(--line);
+      padding: 10px 0;
+    }
+    .missing-row:first-of-type { border-top: 0; }
+    .missing-row strong {
+      display: block;
+      margin-bottom: 5px;
+      color: #26354d;
+    }
+    .missing-numbers {
+      color: var(--text);
+      font-size: 13px;
+      word-break: break-word;
+    }
     .check-row {
       display: flex;
       align-items: center;
@@ -190,6 +216,7 @@
         <label class="check-row"><input id="searchOwnedOnly" type="checkbox"> 보유 장비만 보기</label>
         <div style="height:10px"></div>
         <button id="searchBtn">검색</button>
+        <button id="missingBtn" class="secondary">빈 장비 번호 보기</button>
       </div>
       <div id="searchResults"></div>
     </section>
@@ -283,6 +310,14 @@
     }
     function skillName(id) { return skills[id]?.name || id; }
     function skillNote(id) { return skills[id]?.notes || ""; }
+    function equipmentNumber(id) {
+      const digits = String(id).match(/\d+/g)?.join("") || String(id);
+      const number = Number(digits);
+      return Number.isFinite(number) ? String(number) : String(id);
+    }
+    function isCompleteEquipment(row) {
+      return Boolean(row.name && row.skill1_id && row.skill2_id && row.skill3_id);
+    }
     function saveOwned() {
       try { localStorage.setItem(OWNED_KEY, JSON.stringify([...owned].sort())); } catch {}
       updateSummary();
@@ -341,6 +376,18 @@
       });
       document.getElementById("searchResults").innerHTML = rows.length ? rows.map(e => equipmentCard(e)).join("") : `<div class="empty">검색 결과가 없습니다.</div>`;
       bindOwnedToggles();
+    }
+    function showMissingEquipment() {
+      const groups = Object.fromEntries(SLOTS.map(slot => [slot, []]));
+      for (const row of DATA.equipment) {
+        const slotName = SLOT_MAP[row.slot] || row.slot;
+        if (!groups[slotName]) continue;
+        if (!isCompleteEquipment(row)) groups[slotName].push(equipmentNumber(row.id));
+      }
+      document.getElementById("searchResults").innerHTML = `<div class="card missing-list">
+        <h2>빈 장비 번호</h2>
+        ${SLOTS.map(slot => `<div class="missing-row"><strong>${escapeHtml(slot)}</strong><div class="missing-numbers">${groups[slot].length ? groups[slot].join(", ") : "없음"}</div></div>`).join("")}
+      </div>`;
     }
     function runCombo() {
       const targetIds = selected(["comboSkill1","comboSkill2","comboSkill3","comboSkill4"]);
@@ -475,6 +522,7 @@
       alert(`보유 장비 ${owned.size}개를 복원했습니다.`);
     }
     document.getElementById("searchBtn").addEventListener("click", runSearch);
+    document.getElementById("missingBtn").addEventListener("click", showMissingEquipment);
     document.getElementById("comboBtn").addEventListener("click", runCombo);
     document.getElementById("ownedText").addEventListener("input", renderOwned);
     document.getElementById("ownedSlot").addEventListener("change", renderOwned);
