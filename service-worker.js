@@ -1,5 +1,5 @@
-const CACHE_NAME = "skill-set-lab-v1";
-const ASSETS = ["./skill_set_mobile.html", "./manifest.webmanifest", "./icon.svg"];
+const CACHE_NAME = "skill-set-lab-20260506";
+const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)));
