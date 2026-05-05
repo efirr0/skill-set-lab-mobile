@@ -260,6 +260,7 @@
           <option value="악세사리">악세사리</option>
           <option value="펫">펫</option>
         </select>
+        <label class="check-row"><input id="hideOwned" type="checkbox"> 보유 장비 숨기기</label>
         <div class="mini-actions">
           <button id="markVisibleOwned">보이는 장비 보유</button>
           <button id="clearVisibleOwned">보이는 장비 해제</button>
@@ -451,8 +452,10 @@
     function ownedRows() {
       const slot = document.getElementById("ownedSlot").value;
       const text = document.getElementById("ownedText").value.trim().toLowerCase();
+      const hideOwned = document.getElementById("hideOwned").checked;
       return equipment.filter(e => {
         if (slot && e.slotName !== slot) return false;
+        if (hideOwned && owned.has(e.id)) return false;
         if (!text) return true;
         const haystack = `${e.name} ${e.slotName} ${e.skillIds.map(skillName).join(" ")}`.toLowerCase();
         return haystack.includes(text);
@@ -526,6 +529,7 @@
     document.getElementById("comboBtn").addEventListener("click", runCombo);
     document.getElementById("ownedText").addEventListener("input", renderOwned);
     document.getElementById("ownedSlot").addEventListener("change", renderOwned);
+    document.getElementById("hideOwned").addEventListener("change", renderOwned);
     document.getElementById("markVisibleOwned").addEventListener("click", () => setVisibleOwned(true));
     document.getElementById("clearVisibleOwned").addEventListener("click", () => setVisibleOwned(false));
     document.getElementById("copyOwnedBackup").addEventListener("click", copyOwnedBackup);
