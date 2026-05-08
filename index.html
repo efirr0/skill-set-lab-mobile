@@ -578,6 +578,7 @@
         const potentialCount = bitCount(potentialGe3) + (potentialCandidate !== 0n ? 1 : 0);
         if (potentialCount < minActive) return false;
         if (targetMask !== 0n && (potentialGe2 & targetMask) !== targetMask) return false;
+        if (targetMask !== 0n && bitCount(potentialCandidate & targetMask) > 1) return false;
         if (top.length >= limit) {
           const potentialScore = scoreMasks(potentialGe3, potentialCandidate, targetMask);
           const worst = top[worstIndex()];
@@ -594,6 +595,7 @@
           const effectiveCount = count + (candidateMaskValue !== 0n ? 1 : 0);
           if (effectiveCount < minActive) return;
           if (targetMask !== 0n && (ge2 & targetMask) !== targetMask) return;
+          if (targetMask !== 0n && bitCount(candidateMaskValue & targetMask) > 1) return;
           const combo = selectedRows.map(row => row.e);
           pushTop({
             combo,
