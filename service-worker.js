@@ -1,4 +1,4 @@
-const CACHE_NAME = "skill-set-lab-20260509-3";
+const CACHE_NAME = "skill-set-lab-20260511-2";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", event => {
@@ -12,4 +12,3 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", event => {
   event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request)));
 });
-
